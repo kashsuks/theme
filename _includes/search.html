@@ -1,0 +1,86 @@
+<div class="search-overlay" id="searchOverlay">
+  <div class="search-modal">
+    <div class="search-input-wrapper">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      <input type="text" id="searchInput" placeholder="Search documentation..." autofocus>
+      <kbd>esc</kbd>
+    </div>
+    <div class="search-results" id="searchResults">
+      <div class="search-empty">Start typing to search...</div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  var searchData = [];
+  {% for doc in site.docs %}
+  searchData.push({
+    title: {{ doc.title | jsonify }},
+    url: "{{ doc.url | relative_url }}",
+    content: {{ doc.content | strip_html | truncate: 500 | jsonify }},
+    category: {{ doc.category | default: "General" | jsonify }}
+  });
+  {% endfor %}
+
+  var overlay = document.getElementById('searchOverlay');
+  var input = document.getElementById('searchInput');
+  var results = document.getElementById('searchResults');
+
+  window.openSearch = function() {
+    overlay.classList.add('active');
+    setTimeout(function() { input.focus(); }, 100);
+  };
+
+  window.closeSearch = function() {
+    overlay.classList.remove('active');
+    input.value = '';
+    results.innerHTML = '<div class="search-empty">Start typing to search...</div>';
+  };
+
+  overlay.addEventListener('click', function(e) {
+    if (e.target === overlay) closeSearch();
+  });
+
+  document.addEventListener('keydown', function(e) {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+      e.preventDefault();
+      if (overlay.classList.contains('active')) {
+        closeSearch();
+      } else {
+        openSearch();
+      }
+    }
+    if (e.key === 'Escape') closeSearch();
+  });
+
+  input.addEventListener('input', function() {
+    var query = this.value.toLowerCase().trim();
+    if (!query) {
+      results.innerHTML = '<div class="search-empty">Start typing to search...</div>';
+      return;
+    }
+    var matches = searchData.filter(function(item) {
+      return item.title.toLowerCase().indexOf(query) !== -1 ||
+             item.content.toLowerCase().indexOf(query) !== -1;
+    });
+    if (matches.length === 0) {
+      results.innerHTML = '<div class="search-empty">No results found for "' + query.replace(/[<>&"]/g, '') + '"</div>';
+      return;
+    }
+    results.innerHTML = matches.map(function(item) {
+      var idx = item.content.toLowerCase().indexOf(query);
+      var preview = '';
+      if (idx !== -1) {
+        var start = Math.max(0, idx - 40);
+        var end = Math.min(item.content.length, idx + query.length + 60);
+        preview = (start > 0 ? '...' : '') + item.content.substring(start, end) + (end < item.content.length ? '...' : '');
+      }
+      return '<a class="search-result-item" href="' + item.url + '">' +
+        '<div class="result-title">' + item.title + '</div>' +
+        (preview ? '<div class="result-preview">' + preview + '</div>' : '') +
+        '</a>';
+    }).join('');
+  });
+})();
+</script>

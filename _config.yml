@@ -1,5 +1,19 @@
-title: tonic-starter
-description: ""
+title: Pinel
+description: "Description"
 encoding: utf-8
+url: ""
+baseurl: ""
 
-exclude: ["README.md", "LICENSE", "*.gem", "*.gemspec", "Gemfile.lock"]
+collections:
+  docs:
+    output: true
+    permalink: /docs/:path/
+
+defaults:
+  - scope:
+      path: ""
+      type: "docs"
+    values:
+      layout: "docs"
+
+exclude: ["README.md", "LICENSE", "*.gem", "*.gemspec", "Gemfile.lock", "node_modules"]

@@ -1,0 +1,30 @@
+---
+layout: default
+---
+<div class="docs-wrapper">
+  <aside class="docs-sidebar" id="docsSidebar">
+    {% assign grouped = site.docs | group_by: "category" %}
+    {% for group in grouped %}
+    <div class="sidebar-section">
+      <h4>{{ group.name | default: "General" }}</h4>
+      <ul>
+        {% assign sorted = group.items | sort: "order" %}
+        {% for doc in sorted %}
+        <li><a href="{{ doc.url | relative_url }}" {% if page.url == doc.url %}class="active"{% endif %}>{{ doc.title }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endfor %}
+  </aside>
+  <article class="docs-content">
+    <h1>{{ page.title }}</h1>
+    {% if page.description %}
+    <div class="docs-meta">{{ page.description }}</div>
+    {% endif %}
+    {{ content }}
+  </article>
+</div>
+
+<button class="sidebar-toggle" onclick="document.getElementById('docsSidebar').classList.toggle('open')">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+</button>
