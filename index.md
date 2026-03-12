@@ -43,16 +43,4 @@ layout: home
       </ul>
     </div>
   </div>
-
-  <div class="features-col sponsors-col">
-    <h2>Sponsors</h2>
-    <div class="sponsor-card">
-      <p><strong>Your Logo Here</strong></p>
-      <p>Become a sponsor and support Pinel's development</p>
-    </div>
-    <div class="sponsor-card">
-      <p><strong>Open Source</strong></p>
-      <p>Pinel is free and open source, backed by the community</p>
-    </div>
-  </div>
 </section>
